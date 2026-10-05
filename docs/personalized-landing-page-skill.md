@@ -66,3 +66,19 @@ A short note from the AE to one real person, in that person's own working langua
 - Keep one HTML head and CSS. Swap only the `<body>` when rewriting copy.
 - Research tools that worked: Exa (people search, page fetch), Firecrawl (case studies with a direct-quote query, brand colors).
 
+
+## Publishing (learned 2026-10-06)
+- **Vercel:** build a folder with the page as `index.html` plus only the `clay assets` files it references, then run `npx vercel deploy --prod --yes --scope utsav-gtme` from that folder. Redeploying to the same project keeps the same URL. Check the page and every asset return 200 as an anonymous visitor.
+- **GitHub:** one private repo, `uj-git27/clay-landing-pages`, with one self-contained folder per prospect. Local clone: `Desktop\Bootprint\clay-landing-pages`. Leave out the prospect CSV and the assets zip. Git identity is set for that repo only.
+- **Only add what the user is working on.** The first push included the older Sarah and Linear pages, and the user asked for Calli only.
+- **Button wording:** "Confirm demo time", not "Confirm my demo time".
+- Deploy and push only after the user approves the local preview.
+
+## Current status (as of 2026-10-06)
+- **Active prospect:** Calli Taylor, Global Head of Sales Development, Retool. This is the only account being worked on.
+- **Source file:** `retool-calli-taylor.htm` in the project folder. Content and design are approved by the user.
+- **Live:** https://clay-retool-calli.vercel.app (Vercel project `clay-retool-calli`).
+- **GitHub:** https://github.com/uj-git27/clay-landing-pages (private), folder `retool-calli-taylor/` plus `docs/`.
+- **Open:** the closing button still has the `[CALENDAR LINK]` placeholder. Three card buttons still use "my" ("Qualify my list", "Research my accounts", "Test my rule"); the user has not asked to change them.
+- **Left as they are, by the user's choice:** the older Sarah Mitchell and Marcus Chen sites are still live on Vercel, the research brief in the repo still names Sarah Mitchell, and the first commit in the repo history still holds the Sarah and Linear folders.
+- **Not built:** Linear, Loom, Webflow and Airtable pages in the new format. Research and real contacts for them are in `account-research-brief.md` and `CLAUDE.md`.
