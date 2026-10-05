@@ -1,0 +1,528 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clay × Retool — Calli Taylor</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+  /* Real Roobert (trial files supplied by Clay). Trial licence: internal previews only. */
+  @font-face {
+    font-family: "Roobert";
+    src: url("clay assets/Roobert-Font/RoobertTRIALVF-BF67243fd545701.ttf") format("truetype-variations"),
+         url("clay assets/Roobert-Font/RoobertTRIALVF-BF67243fd545701.ttf") format("truetype");
+    font-weight: 100 900; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: "Roobert Mono";
+    src: url("clay assets/Roobert-Font/RoobertMonoTRIAL-Regular-BF67243fd29a433.otf") format("opentype");
+    font-weight: 400; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: "Roobert Mono";
+    src: url("clay assets/Roobert-Font/RoobertMonoTRIAL-Medium-BF67243fd28915a.otf") format("opentype");
+    font-weight: 500; font-style: normal; font-display: swap;
+  }
+
+  :root {
+    /* Clay tokens, from the brand book */
+    --oat-100: #fefdfb; --oat-200: #f3f2ed; --oat-300: #eee9df; --oat-400: #dad4c8;
+    --oat-600: #9f9b93; --oat-700: #85817a; --oat-800: #55534e;
+    --ink: #1b1a18; --border: #e0dedc; --grey-900: #282c35;
+    --hero-green: #035D44;
+    --blueberry: #3859f9; --blueberry-t: #e9eefb; --blueberry-l: #429dff;
+    --tangerine: #ff7614; --tangerine-cta: #b53c09; --tangerine-t: #fff3ed;
+    --lime: #cbd810; --lime-hl: #eef773; --lime-t: #fcfee2; --lime-d: #102b02; --lime-text: #7f7f00;
+    --dragonfruit: #cc089e; --dragonfruit-t: #fce3f4; --dragonfruit-l: #ff7ad5;
+    /* Retool partner colours, from the brand book. Live only in the docked signal table. */
+    --p-ink: #151515; --p-text: #e9ebdf; --p-accent: #e8765e;
+    --ease-clay: cubic-bezier(0.075, 0.82, 0.165, 1);
+    --gutter: clamp(16px, 4vw, 32px);
+    /* radius hierarchy */
+    --r-lg: 32px; --r-md: 24px; --r-sm: 16px; --r-btn: 12px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 88px; }
+  body {
+    font-family: "Roobert", -apple-system, Helvetica, Arial, sans-serif;
+    font-size: 16px; line-height: 1.5;
+    background: var(--oat-100); color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+  .mono { font-family: "Roobert Mono", ui-monospace, Menlo, monospace; }
+  .container { width: 100%; max-width: 1280px; margin-inline: auto; padding-inline: var(--gutter); }
+  video { display: block; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--blueberry); outline-offset: 3px; }
+
+  /* ---------- buttons: flat colour, 12px radius, background-only hover ---------- */
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    font: inherit; font-weight: 500; font-size: 16px; line-height: 24px;
+    padding: 12px 20px; border-radius: var(--r-btn); text-decoration: none; border: 0; cursor: pointer;
+    transition: background-color .3s var(--ease-clay);
+  }
+  .btn-primary { background: #000; color: #fff; }
+  .btn-primary:hover { background: var(--grey-900); }
+  .btn-secondary { background: var(--oat-200); color: var(--ink); }
+  .btn-secondary:hover { background: var(--oat-300); }
+  .btn-sm { font-size: 14px; line-height: 21px; padding: 8px 16px; }
+
+  /* ---------- nav: floating rounded pill ---------- */
+  .nav {
+    position: fixed; z-index: 50;
+    top: calc(12px + env(safe-area-inset-top, 0px));
+    left: var(--gutter); right: var(--gutter);
+    max-width: 1216px; margin-inline: auto;
+    background: var(--oat-100); border-radius: 18px;
+    padding: 10px 10px 10px 20px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  }
+  .lockup { display: flex; align-items: center; gap: 14px; min-width: 0; }
+  .lockup img { height: 30px; width: auto; display: block; }
+  .lockup .x { color: var(--oat-600); font-size: 20px; font-weight: 400; line-height: 1; }
+  .lockup .partner { font-family: "Roobert Mono", ui-monospace, monospace; font-weight: 500; font-size: 18px; letter-spacing: -0.01em; }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-note { font-size: 14px; color: var(--oat-800); white-space: nowrap; }
+  .nav-note b { font-weight: 600; color: var(--ink); }
+  .nav .btn { white-space: nowrap; flex: none; }
+  .nav .short { display: none; }
+
+  /* ---------- hero: green clay landscape, signal table docked at the bottom ---------- */
+  .hero {
+    position: relative; overflow: hidden; isolation: isolate;
+    background: var(--hero-green); color: var(--oat-100);
+  }
+  /* sized by width, not by hero height, so the props never drift under the headline when the table grows */
+  .hero-video { position: absolute; top: 0; left: 0; width: 100%; height: auto; z-index: -2; }
+  .hero::after {
+    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background: linear-gradient(180deg, rgba(3,93,68,0) 25%, rgba(3,93,68,.6) 55%, rgba(3,93,68,.8) 100%);
+  }
+  .hero-inner { padding-top: 27vw; }
+  h1, h2, h3 { font-weight: 560; }
+  .hero h1 {
+    font-size: clamp(42px, 5.6vw, 84px); line-height: 1.0; letter-spacing: -0.04em; font-weight: 575;
+    max-width: 17ch;
+  }
+  .hero h1 .accent { display: block; color: var(--lime-hl); }
+  .hero .sub { font-size: clamp(17px, 1.6vw, 20px); line-height: 1.4; max-width: 60ch; margin-top: 20px; color: rgba(254,253,251,.92); }
+  .hero .sub b { font-weight: 600; color: #fff; }
+  .hero-cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+  .hero .btn-secondary { background: var(--oat-100); }
+  .hero .btn-secondary:hover { background: var(--oat-300); }
+
+  /* the docked signal table */
+  .dock { margin-top: clamp(36px, 5vw, 64px); }
+  .sheet { background: var(--p-ink); color: var(--p-text); border-radius: var(--r-md) var(--r-md) 0 0; padding: 14px 14px 18px; }
+  .sheet-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 10px 14px; font-size: 13px; color: rgba(233,235,223,.7); }
+  .sheet-bar .name { font-family: "Roobert Mono", ui-monospace, monospace; color: var(--p-text); font-weight: 500; }
+  .sheet-bar .live { display: inline-flex; align-items: center; gap: 6px; }
+  .sheet-bar .live::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--p-accent); }
+  .sheet-scroll { overflow-x: auto; border-radius: var(--r-sm); }
+  table.sheet-t { border-collapse: collapse; width: 100%; min-width: 1000px; font-size: 14px; line-height: 1.4; }
+  .sheet-t th {
+    text-align: left; font-weight: 500; font-size: 13px; white-space: nowrap;
+    color: rgba(233,235,223,.7); padding: 10px; background: rgba(233,235,223,.06); border-bottom: 1px solid rgba(233,235,223,.14);
+  }
+  .sheet-t th i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 8px; opacity: .22; animation: light .5s var(--ease-clay) forwards; animation-delay: var(--d, 0s); }
+  .sheet-t td { padding: 14px 10px; border-bottom: 1px solid rgba(233,235,223,.1); vertical-align: top; }
+  .sheet-t td.c-level { width: 92px; }
+  .sheet-t td.c-sig { width: 31%; }
+  .sheet-t td.c-read { width: 28%; color: rgba(233,235,223,.82); }
+  .sheet-t td.c-play { width: 70px; text-align: center; }
+  .sheet-t td.c-src { width: 17%; font-size: 13px; color: rgba(233,235,223,.7); }
+  .sheet-t td.c-src a { color: var(--p-text); text-decoration-color: rgba(233,235,223,.4); text-underline-offset: 3px; }
+  .sheet-t td.c-src a:hover { text-decoration-color: var(--p-accent); }
+  .sheet-t tr.you td { background: rgba(232,118,94,.14); }
+  .chip-lv { display: inline-block; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: var(--r-sm); background: rgba(233,235,223,.12); color: var(--p-text); }
+  .you .chip-lv { background: var(--p-accent); color: var(--p-ink); }
+  .pn { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; font-weight: 600; font-size: 13px; background: var(--p-text); color: var(--p-ink); }
+  .shim { display: block; height: 10px; border-radius: 6px; width: 70%; background: linear-gradient(90deg, rgba(233,235,223,.08) 0%, rgba(233,235,223,.22) 50%, rgba(233,235,223,.08) 100%); background-size: 200% 100%; animation: load 1.8s linear infinite; }
+  .shim.w1 { width: 56%; } .shim.w2 { width: 82%; } .shim.w3 { width: 44%; }
+  /* the one orchestrated moment: the column dots light up in order */
+  @keyframes light { to { opacity: 1; transform: scale(1.35); } }
+  @keyframes load { to { background-position: -200% 0; } }
+  .sheet-note { padding: 14px 10px 0; font-size: 13px; color: rgba(233,235,223,.6); max-width: 100ch; }
+
+  /* ---------- generic section ---------- */
+  section { padding-block: clamp(48px, 7vw, 88px) 0; }
+  h2.title { font-size: clamp(34px, 4.6vw, 64px); line-height: 1.0; letter-spacing: -0.04em; font-weight: 560; max-width: 18ch; }
+  .lede { font-size: clamp(16px, 1.4vw, 19px); line-height: 1.45; color: var(--oat-800); max-width: 58ch; margin-top: 20px; }
+  .lede b { color: var(--ink); font-weight: 600; }
+
+  /* ---------- stacked play cards: pure CSS sticky, block flow ---------- */
+  .stack { margin-top: clamp(32px, 4vw, 48px); }
+  .fcard + .fcard { margin-top: 24px; }
+  .fcard {
+    position: sticky; top: 84px;
+    background: var(--bg); border-radius: var(--r-lg); padding: clamp(24px, 3.4vw, 44px);
+    display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); align-items: center;
+  }
+  .fcard .tag { display: inline-block; background: #fff; color: var(--a); font-size: 14px; font-weight: 600; padding: 5px 14px; border-radius: var(--r-sm); }
+  .fcard h3 { font-size: clamp(30px, 3.6vw, 52px); line-height: 1.0; letter-spacing: -0.04em; font-weight: 560; margin-top: 18px; }
+  .fcard h3 .accent { display: block; color: var(--a-text, var(--a)); }
+  .fcard p.body { margin-top: 18px; font-size: 17px; line-height: 1.45; color: var(--oat-800); max-width: 52ch; }
+  .fcard p.sig { margin-top: 18px; font-size: 15px; line-height: 1.4; max-width: 52ch; padding-left: 14px; border-left: 3px solid var(--a); }
+  .fcard p.sig b, .fcard p.demo-line b { font-weight: 600; }
+  .fcard p.demo-line { margin-top: 12px; font-size: 15px; line-height: 1.4; max-width: 52ch; color: var(--oat-800); }
+  .fcard .btn { margin-top: 24px; background: var(--cta-bg); color: var(--cta-fg); }
+  .fcard .btn:hover { background: var(--cta-hover); }
+  .fmedia { border-radius: var(--r-md); overflow: hidden; aspect-ratio: 1 / 1; background: var(--oat-300); }
+  .fmedia video { width: 100%; height: 100%; object-fit: cover; }
+  .f-data  { --bg: var(--blueberry-t);  --a: var(--blueberry);     --cta-bg: var(--blueberry);     --cta-fg: #fff; --cta-hover: #2c47d1; }
+  .f-agents{ --bg: var(--tangerine-t);  --a: var(--tangerine-cta); --cta-bg: var(--tangerine-cta); --cta-fg: #fff; --cta-hover: #8f2f07; }
+  .f-orch  { --bg: var(--lime-t);       --a: var(--lime-text);     --a-text: var(--lime-text); --cta-bg: var(--lime); --cta-fg: var(--lime-d); --cta-hover: #b8c40d; }
+
+  /* ---------- case studies ---------- */
+  .cases { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; margin-top: 36px; }
+  .case { background: var(--oat-200); border-radius: var(--r-lg); padding: clamp(22px, 2.6vw, 34px); display: flex; flex-direction: column; }
+  .case .co { font-size: 14px; font-weight: 600; background: #fff; align-self: flex-start; padding: 5px 14px; border-radius: var(--r-sm); }
+  .case .big { margin-top: 22px; font-size: clamp(48px, 5vw, 72px); line-height: .95; letter-spacing: -0.05em; font-weight: 575; }
+  .case .big small { font-size: .4em; letter-spacing: -0.02em; font-weight: 560; margin-left: 4px; }
+  .case .what { margin-top: 10px; font-size: 17px; line-height: 1.3; font-weight: 560; letter-spacing: -0.01em; }
+  .case .how { margin-top: 14px; font-size: 15px; line-height: 1.45; color: var(--oat-800); }
+  .case blockquote { margin-top: 18px; padding-left: 14px; border-left: 3px solid var(--oat-400); font-size: 15px; line-height: 1.4; color: var(--ink); }
+  .case blockquote cite { display: block; margin-top: 6px; font-style: normal; font-size: 13px; color: var(--oat-800); }
+  .case .more { margin-top: auto; padding-top: 22px; font-size: 14px; font-weight: 600; }
+  .case .more a { text-underline-offset: 3px; }
+
+  /* ---------- demo plan ---------- */
+  .plan-grid { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: clamp(28px, 4vw, 64px); align-items: start; margin-top: 36px; }
+  ol.steps { list-style: none; counter-reset: s; display: grid; gap: 0; }
+  ol.steps li { counter-increment: s; display: grid; grid-template-columns: 40px 1fr; gap: 16px; padding: 22px 0; border-top: 1px solid var(--border); }
+  ol.steps li:last-child { border-bottom: 1px solid var(--border); }
+  ol.steps li::before { content: counter(s); width: 40px; height: 40px; border-radius: 50%; background: var(--ink); color: #fff; display: grid; place-items: center; font-weight: 600; font-size: 16px; }
+  ol.steps h3 { font-size: 22px; line-height: 1.1; letter-spacing: -0.03em; font-weight: 560; }
+  ol.steps p { margin-top: 6px; color: var(--oat-800); font-size: 16px; line-height: 1.45; max-width: 54ch; }
+  ol.steps .chip { display: inline-block; vertical-align: 3px; margin-left: 8px; font-size: 13px; font-weight: 600; padding: 2px 10px; border-radius: var(--r-sm); letter-spacing: 0; }
+  .bring { background: var(--oat-200); border-radius: var(--r-md); padding: clamp(24px, 3vw, 36px); }
+  .bring h3 { font-size: 26px; line-height: 1.05; letter-spacing: -0.03em; font-weight: 560; }
+  .bring ul { list-style: none; margin-top: 18px; display: grid; gap: 14px; }
+  .bring li { display: flex; gap: 12px; font-size: 16px; line-height: 1.4; }
+  .bring li::before { content: ""; flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--lime); margin-top: 7px; }
+  .bring p.fine { margin-top: 20px; font-size: 14px; color: var(--oat-800); }
+
+  /* ---------- final CTA over the ball pit ---------- */
+  .finale { position: relative; isolation: isolate; overflow: hidden; margin-top: clamp(56px, 8vw, 104px); padding-block: clamp(64px, 9vw, 120px) 0; background: var(--oat-300); }
+  .finale-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; }
+  .cta-card { background: #fff; border-radius: var(--r-lg); padding: clamp(28px, 4vw, 52px); max-width: 720px; margin-inline: auto; }
+  .cta-card h2 { font-size: clamp(34px, 4.6vw, 60px); line-height: 1.0; letter-spacing: -0.04em; font-weight: 560; }
+  .cta-card p.lede { margin-top: 18px; }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
+  .ae { display: flex; align-items: center; gap: 14px; margin-top: 30px; padding-top: 24px; border-top: 1px solid var(--border); }
+  .avatar { flex: none; width: 52px; height: 52px; border-radius: 50%; background: var(--oat-200); border: 1px dashed var(--oat-600); display: grid; place-items: center; font-size: 13px; font-weight: 600; color: var(--oat-700); }
+  .ae b { display: block; font-weight: 600; }
+  .ae span { display: block; font-size: 14px; color: var(--oat-800); }
+  .foot { background: #fff; border-radius: var(--r-lg) var(--r-lg) 0 0; margin-top: 20px; padding: 22px clamp(24px, 3vw, 40px); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; max-width: 1216px; margin-inline: auto; font-size: 14px; color: var(--oat-800); }
+  .foot img { height: 24px; width: auto; }
+  .foot .left { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 960px) {
+    .plan-grid { grid-template-columns: minmax(0, 1fr); }
+    .cases { grid-template-columns: minmax(0, 1fr); }
+    .fcard { position: relative; top: auto; grid-template-columns: minmax(0, 1fr); }
+    .fmedia { order: -1; aspect-ratio: 4 / 3; }
+  }
+  @media (max-width: 640px) {
+    .nav { padding-left: 14px; }
+    .nav-note { display: none; }
+    .nav .long { display: none; }
+    .nav .short { display: inline; }
+    .lockup img { height: 26px; }
+    .lockup .partner { font-size: 16px; }
+    .hero-video { height: 440px; object-fit: cover; object-position: 50% 0%; }
+    .hero-inner { padding-top: 400px; }
+    .hero-cta .btn { width: 100%; justify-content: center; }
+    .cta-row .btn { width: 100%; justify-content: center; }
+    .fcard, .cta-card, .case { border-radius: var(--r-md); }
+    .foot { border-radius: var(--r-md) var(--r-md) 0 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .shim { animation: none; }
+    .sheet-t th i { animation: none; opacity: 1; }
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<nav class="nav" aria-label="Page">
+  <div class="lockup" aria-label="Clay × Retool">
+    <img src="clay assets/Full Mark/Dark/Clay_Logo_Primary_Blk@2x.png" alt="Clay">
+    <span class="x" aria-hidden="true">×</span>
+    <span class="partner">Retool</span>
+  </div>
+  <div class="nav-right">
+    <span class="nav-note">Prepared for <b>Calli Taylor</b></span>
+    <a class="btn btn-primary btn-sm" href="#book"><span class="long">Confirm demo time</span><span class="short">Confirm time</span></a>
+  </div>
+</nav>
+
+<!-- ============ HERO + DOCKED SIGNAL TABLE ============ -->
+<header class="hero">
+  <video class="hero-video" autoplay muted loop playsinline preload="auto" aria-hidden="true">
+    <source src="clay assets/Hero 06-02 Lossy 0001-0240.mp4" type="video/mp4">
+  </video>
+  <div class="container hero-inner">
+    <h1>Book the meetings <span class="accent">your SEs want to take.</span></h1>
+    <p class="sub">Calli, Retool wants predictable pipeline, and every SE supports 2 AEs. Here are three ways to send them better meetings, with results from teams like yours.</p>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href="#book">Confirm demo time</a>
+      <a class="btn btn-secondary" href="#plays">See the three ways</a>
+    </div>
+
+    <div class="dock">
+      <div class="sheet">
+        <div class="sheet-bar"><span class="name">retool-signals</span><span class="live">Public sources, October 2026</span></div>
+        <div class="sheet-scroll">
+          <table class="sheet-t">
+            <thead>
+              <tr>
+                <th>Level</th>
+                <th><i style="background:var(--blueberry-l);--d:.7s"></i>What I found</th>
+                <th><i style="background:var(--tangerine);--d:1.2s"></i>What it means</th>
+                <th><i style="background:var(--lime);--d:1.7s"></i>Way</th>
+                <th>Source</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="c-level"><span class="chip-lv">Retool</span></td>
+                <td class="c-sig">The job post for your role asks for "pipeline predictability" and a qualification engine that's "efficient, data-driven".</td>
+                <td class="c-read">Your goal: predictable pipeline and one clear definition of qualified.</td>
+                <td class="c-play"><span class="pn">3</span></td>
+                <td class="c-src">Retool's post for the role, since closed<br>May 2026</td>
+              </tr>
+              <tr>
+                <td class="c-level"><span class="chip-lv">Retool</span></td>
+                <td class="c-sig">Sales engineer post: "Our revenue and business goals this year are aggressive." 2 AEs share 1 SE.</td>
+                <td class="c-read">SE time is limited, so meeting quality matters.</td>
+                <td class="c-play"><span class="pn">2</span></td>
+                <td class="c-src"><a href="https://www.jobtarget.com/jobs/jt-adx9mb5v5p/internal-sales-engineer-enterprise-san-francisco-california" target="_blank" rel="noopener">Retool job post</a><br>Aug 13, 2026</td>
+              </tr>
+              <tr>
+                <td class="c-level"><span class="chip-lv">Retool</span></td>
+                <td class="c-sig">The new app builder takes apps from Lovable, Replit and coding agents.</td>
+                <td class="c-read">New kinds of signups. A job title won't show who's a real buyer.</td>
+                <td class="c-play"><span class="pn">1</span></td>
+                <td class="c-src"><a href="https://retool.com/blog/retool-launches-react-ai-app-builder" target="_blank" rel="noopener">Retool launch post</a><br>Jun 2026</td>
+              </tr>
+              <tr>
+                <td class="c-level"><span class="chip-lv">Retool</span></td>
+                <td class="c-sig">100% of the AMER BDR team hit quota in July.</td>
+                <td class="c-read">Volume is covered. Meeting quality is the next lever.</td>
+                <td class="c-play"><span class="pn">3</span></td>
+                <td class="c-src"><a href="https://www.linkedin.com/posts/chelsea-farnes-6531b9133_salesdevelopment-bdr-teamwork-activity-7488642746774155264-ZfE_" target="_blank" rel="noopener">LinkedIn post</a><br>Jul 30, 2026</td>
+              </tr>
+              <tr class="you">
+                <td class="c-level"><span class="chip-lv">You</span></td>
+                <td class="c-sig">You joined as Global Head of Sales Development.</td>
+                <td class="c-read">A good time to set the rule for what counts as qualified.</td>
+                <td class="c-play"><span class="pn">3</span></td>
+                <td class="c-src"><a href="https://www.linkedin.com/feed/update/urn:li:activity:7487680852479340544" target="_blank" rel="noopener">Your LinkedIn post</a><br>Jul 28, 2026</td>
+              </tr>
+              <tr class="you">
+                <td class="c-level"><span class="chip-lv">You</span></td>
+                <td class="c-sig">Your post: "Ask Instead of Assume."</td>
+                <td class="c-read">Reps ask better questions when they know the account first.</td>
+                <td class="c-play"><span class="pn">2</span></td>
+                <td class="c-src"><a href="https://www.linkedin.com/posts/calli-taylor-862b99183_a-big-training-focus-for-my-sales-development-activity-7351753531885826049-4i29" target="_blank" rel="noopener">Your LinkedIn post</a><br>Jul 17, 2025</td>
+              </tr>
+              <tr>
+                <td class="c-level"><span class="chip-lv">Retool</span></td>
+                <td class="c-sig"><span class="shim w2"></span></td>
+                <td class="c-read"><span class="shim w1"></span></td>
+                <td class="c-play"><span class="shim w3" style="margin-inline:auto"></span></td>
+                <td class="c-src">Your list, or one we build on the call</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="sheet-note">"What I found" comes from public pages. "What it means" is my take, not a fact about Retool.</p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ THE THREE WAYS ============ -->
+<section id="plays">
+  <div class="container">
+    <h2 class="title">Three ways Clay helps.</h2>
+
+    <div class="stack">
+      <article class="fcard f-data">
+        <div>
+          <span class="tag">Way 1 · Data</span>
+          <h3>Spot real buyers <span class="accent">before anyone dials.</span></h3>
+          <p class="sig"><b>Your goal:</b> more meetings that become opportunities.</p>
+          <p class="body">Clay finds accounts from signals like hiring and funding, adds company size and tech stack, then scores them on your rules. SDRs call the best ones first.</p>
+          <p class="demo-line"><b>On the call:</b> bring your own list and we qualify it, or we build one live from signals.</p>
+          <a class="btn" href="#book">Qualify my list</a>
+        </div>
+        <div class="fmedia" aria-hidden="true">
+          <video autoplay muted loop playsinline preload="metadata" data-lazy><source src="clay assets/Data 06-16 1000px.webm" type="video/webm"></video>
+        </div>
+      </article>
+
+      <article class="fcard f-agents">
+        <div>
+          <span class="tag">Way 2 · Agents</span>
+          <h3>Cut research time <span class="accent">before every call.</span></h3>
+          <p class="sig"><b>Your goal:</b> more pipeline from the same SDRs.</p>
+          <p class="body">Clay researches each account and puts a short brief next to it: what they build, who owns it, what they're hiring for. SDRs read it and dial.</p>
+          <p class="demo-line"><b>On the call:</b> you name three things your best SDR checks. We run them on that list.</p>
+          <a class="btn" href="#book">Research my accounts</a>
+        </div>
+        <div class="fmedia" aria-hidden="true">
+          <video autoplay muted loop playsinline preload="metadata" data-lazy><source src="clay assets/Agents 06-16 1000px.webm" type="video/webm"></video>
+        </div>
+      </article>
+
+      <article class="fcard f-orch">
+        <div>
+          <span class="tag">Way 3 · Orchestration</span>
+          <h3>Define "qualified" once, <span class="accent">SDR to SE.</span></h3>
+          <p class="sig"><b>Your goal:</b> predictable pipeline. It's in your job post.</p>
+          <p class="body">You write the rule once. Clay applies it to every account and routes it to an SDR, an AE or an SE. It can also alert them in Slack when a target account visits your site.</p>
+          <p class="demo-line"><b>On the call:</b> tell me your definition of qualified. We run it on the same list.</p>
+          <a class="btn" href="#book">Test my rule</a>
+        </div>
+        <div class="fmedia" aria-hidden="true">
+          <video autoplay muted loop playsinline preload="metadata" data-lazy><source src="clay assets/Orch 06-16 1000px.webm" type="video/webm"></video>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CASE STUDIES ============ -->
+<section id="proof">
+  <div class="container">
+    <h2 class="title">Teams that got results.</h2>
+
+    <div class="cases">
+      <article class="case">
+        <span class="co">Hex · Account alerts</span>
+        <div class="big">50%<small>higher</small></div>
+        <p class="what">Win rate on accounts first spotted from a website visit.</p>
+        <p class="how">A Slack alert tells the rep and SDR what the account read and who to contact.</p>
+        <p class="more"><a href="https://www.clay.com/customers/hex" target="_blank" rel="noopener">Read the Hex story</a></p>
+      </article>
+
+      <article class="case">
+        <span class="co">Lovable · Lead scoring</span>
+        <div class="big">+50%<small>meetings</small></div>
+        <p class="what">More qualified meetings per rep.</p>
+        <p class="how">Clay researches each enterprise lead and sends it to the right rep with a brief.</p>
+        <p class="more"><a href="https://www.clay.com/customers/lovable" target="_blank" rel="noopener">Read the Lovable story</a></p>
+      </article>
+
+      <article class="case">
+        <span class="co">Merge · Account research</span>
+        <div class="big">10+<small>hours</small></div>
+        <p class="what">Back to each SDR every week. Replies up 20%, enterprise meetings up 15%.</p>
+        <p class="how">An agent watches 1,500+ accounts and tells the owner what changed.</p>
+        <p class="more"><a href="https://www.clay.com/customers/merge" target="_blank" rel="noopener">Read the Merge story</a></p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PLAN ============ -->
+<section id="plan">
+  <div class="container">
+    <h2 class="title">On the call.</h2>
+    <div class="plan-grid">
+      <ol class="steps">
+        <li>
+          <div>
+            <h3>Start with a list <span class="chip" style="background:var(--blueberry-t);color:var(--blueberry)">Data</span></h3>
+            <p>Bring your own and we qualify it. Or we build one live from signals like hiring or funding.</p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h3>Run your SDR's checklist <span class="chip" style="background:var(--tangerine-t);color:var(--tangerine-cta)">Agents</span></h3>
+            <p>Clay does the research your best SDR does by hand.</p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h3>Apply your rule for "qualified" <span class="chip" style="background:var(--lime-t);color:var(--lime-text)">Orchestration</span></h3>
+            <p>See which accounts go to an SDR, an AE or an SE.</p>
+          </div>
+        </li>
+      </ol>
+      <aside class="bring">
+        <h3>Two ways to start.</h3>
+        <ul>
+          <li>Bring your own list and we qualify it on the call</li>
+          <li>Or we build one live, from signals you pick</li>
+          <li>Either way, come with your definition of a qualified meeting</li>
+        </ul>
+        <p class="fine">Want to see it first? Reply and I'll send the table over.</p>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FINAL CTA ============ -->
+<section class="finale" id="book">
+  <video class="finale-video" autoplay muted loop playsinline preload="metadata" data-lazy poster="clay assets/Footer-Still.avif" aria-hidden="true">
+    <source src="clay assets/Footer 05-29 Lossy 0001-0060.mp4" type="video/mp4">
+  </video>
+  <div class="container">
+    <div class="cta-card">
+      <h2>Pick a time. Your list or ours.</h2>
+      <p class="lede">Bring a list and we'll qualify it, or we'll build one live, Calli.</p>
+      <div class="cta-row">
+        <!-- TODO: replace [CALENDAR LINK] with the real booking URL -->
+        <a class="btn btn-primary" href="[CALENDAR LINK]">Confirm demo time</a>
+        <a class="btn btn-secondary" href="mailto:jainutsav67@gmail.com">Reply with questions</a>
+      </div>
+      <div class="ae">
+        <div class="avatar">UJ</div>
+        <div>
+          <b>Utsav J.</b>
+          <span>Account Executive, Clay. jainutsav67@gmail.com</span>
+        </div>
+      </div>
+    </div>
+    <footer class="foot">
+      <div class="left">
+        <img src="clay assets/Full Mark/Dark/Clay_Logo_Primary_Blk@2x.png" alt="Clay">
+        <span>Born in Brooklyn ©2026 Clay Labs Inc.</span>
+      </div>
+      <span>Private preview prepared for Calli Taylor, Retool, from public sources. Not for distribution.</span>
+    </footer>
+  </div>
+</section>
+
+<script>
+  // Play the below-the-fold clay animations only while they're on screen.
+  (function () {
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var vids = document.querySelectorAll('video');
+    if (reduce) { vids.forEach(function (v) { v.removeAttribute('autoplay'); v.pause(); }); return; }
+    if (!('IntersectionObserver' in window)) return;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        var v = e.target;
+        if (e.isIntersecting) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+        else { v.pause(); }
+      });
+    }, { rootMargin: '120px 0px' });
+    document.querySelectorAll('video[data-lazy]').forEach(function (v) { v.pause(); io.observe(v); });
+  })();
+</script>
+</body>
+</html>
+
+
+
+
+
